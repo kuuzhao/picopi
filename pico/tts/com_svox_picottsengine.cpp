@@ -48,9 +48,9 @@
 #include <picodefs.h>
 #include "svox_ssml_parser.h"
 
-#define LOGI printf
-#define LOGE printf
-#define LOGV printf
+#define LOGI(...) fprintf(stderr, ##__VA_ARGS__)
+#define LOGE(...) fprintf(stderr, ##__VA_ARGS__)
+#define LOGV(...) fprintf(stderr, ##__VA_ARGS__)
 
 using namespace android;
 
@@ -1458,6 +1458,8 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
     pico_Int16  bytes_sent, bytes_recv, text_remaining, out_data_type;
     pico_Status ret;
     SvoxSsmlParser * parser = NULL;
+
+    LOGE("LZ: input is: %s", text);
 
     picoSynthAbort = 0;
     if (text == NULL) {

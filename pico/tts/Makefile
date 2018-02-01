@@ -1,10 +1,10 @@
-TARGET = testtts
+TARGET = picotts
 
 CC = g++
 LIBS = -lexpat -lsvoxpico
 INC = -I../compat/include -I../lib
-CFLAGS = $(INC) -fPIC -Wall -g -fpermissive
-CXXFLAGS = $(INC) -fPIC -Wall -g -fpermissive
+CFLAGS = $(INC) -fPIC -Wall -g
+CXXFLAGS = $(INC) -fPIC -Wall -g
 
 # CFLAGS = -fPIC -Wall -Wextra -O2 -g # C flags
 # #LDFLAGS = -shared  # linking flags

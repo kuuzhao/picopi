@@ -12,7 +12,7 @@ using namespace android;
 
 static bool synthesis_complete = false;
 
-static FILE *outfp = stdout;
+static FILE *outfp = NULL;
 
 // @param [inout] void *&       - The userdata pointer set in the original
 //                                 synth call
@@ -27,6 +27,9 @@ static FILE *outfp = stdout;
 // @return TTS_CALLBACK_HALT to indicate the synthesis must stop,
 //         TTS_CALLBACK_CONTINUE to indicate the synthesis must continue if
 //            there is more data to produce.
+
+int gSubchunk2Size = 0;
+
 tts_callback_status synth_done(void *& userdata, uint32_t sample_rate,
         tts_audio_format audio_format, int channels, int8_t *& data, size_t& size, tts_synth_status status)
 {
@@ -39,6 +42,7 @@ tts_callback_status synth_done(void *& userdata, uint32_t sample_rate,
 
 	if ((size == OUTPUT_BUFFER_SIZE) || (status == TTS_SYNTH_DONE))
 	{
+		gSubchunk2Size += size;
 		fwrite(data, size, 1, outfp);
 	}
 
@@ -57,7 +61,7 @@ int main(int argc, char *argv[])
 {
 	tts_result result;
 	TtsEngine* ttsEngine = getTtsEngine();
-	uint8_t* synthBuffer;
+	int8_t* synthBuffer;
 	char* synthInput = NULL;
 	int currentOption;
     char* outputFilename = NULL;
@@ -98,7 +102,7 @@ int main(int argc, char *argv[])
 
     fprintf(stderr, "Input string: \"%s\"\n", synthInput);
 
-	synthBuffer = new uint8_t[OUTPUT_BUFFER_SIZE];
+	synthBuffer = new int8_t[OUTPUT_BUFFER_SIZE];
 
 	result = ttsEngine->init(synth_done, "../lang/");
 
@@ -118,11 +122,12 @@ int main(int argc, char *argv[])
 	if (outputFilename)
 	{
 		outfp = fopen(outputFilename, "wb");
+		fseek(outfp, 12+24+8, SEEK_SET);
 	}
 
 	fprintf(stderr, "Synthesising text...\n");
 
-	result = ttsEngine->synthesizeText(argv[1], synthBuffer, OUTPUT_BUFFER_SIZE, NULL);
+	result = ttsEngine->synthesizeText(synthInput, synthBuffer, OUTPUT_BUFFER_SIZE, NULL);
 
 	if (result != TTS_SUCCESS)
 	{
@@ -138,10 +143,28 @@ int main(int argc, char *argv[])
 
 	if (outputFilename)
 	{
+		char head[44] = {
+			'R','I','F','F',		0,0,0,0,		'W','A','V','E',
+			'f','m','t',(char)0x20,	16,0,0,0,		1,0,1,0,
+			(char)128,62,0,0, 		0,125,0,0,		2,0,(char)0x10,0,
+			'd','a','t','a',		0,0,0,0
+		};
+		uint32_t* chunkSize = (uint32_t*)(head+4);
+		uint32_t* subchunk2size = (uint32_t*)(head+40);
+		*chunkSize = 36 + gSubchunk2Size;
+		*subchunk2size = gSubchunk2Size;
+
+		fseek(outfp, 0, SEEK_SET);
+		fwrite(head, 44, 1, outfp);
+		
 		fclose(outfp);
 	}
 
+	// LZ: TODO:
+	// 		fix the crash here!!
+	#if 0
 	result = ttsEngine->shutdown();
+	#endif
 
 	if (result != TTS_SUCCESS)
 	{

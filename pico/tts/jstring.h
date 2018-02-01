@@ -20,6 +20,8 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#define UNUSED(expr) do { (void)(expr); } while (0)
+
 #ifdef __cplusplus
 extern "C" {
 #endif

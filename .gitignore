@@ -219,5 +219,5 @@ pip-log.txt
 *.d
 *.so
 *.wav
-testtts
+picotts
 

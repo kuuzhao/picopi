@@ -20,8 +20,9 @@
 #include "jstring.h"
 #include <string.h>
 
-#define LOGI printf
-#define LOGE printf
+#define LOGI(...) fprintf(stderr, ##__VA_ARGS__)
+#define LOGE(...) fprintf(stderr, ##__VA_ARGS__)
+#define LOGV(...) fprintf(stderr, ##__VA_ARGS__)
 
 #define SSML_PITCH_XLOW     "50"
 #define SSML_PITCH_LOW      "75"
@@ -209,6 +210,7 @@ void SvoxSsmlParser::startElement(const XML_Char* element, const XML_Char** attr
         {
       xsampastr = strndup16to8(ph, phsize);
       xsampasize = strlen(xsampastr);
+      UNUSED(xsampasize);
           delete [] ph;
         }
 
