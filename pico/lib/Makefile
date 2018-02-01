@@ -1,5 +1,5 @@
 CC = gcc # C compiler
-CFLAGS = -fPIC -Wall -Wextra -O2 -g # C flags
+CFLAGS = -fPIC -Wall -Wextra -g # C flags
 #CFLAGS += -D_WIN32
 LDFLAGS = -shared  # linking flags
 RM = rm -f  # rm command
