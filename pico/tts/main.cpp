@@ -160,11 +160,7 @@ int main(int argc, char *argv[])
 		fclose(outfp);
 	}
 
-	// LZ: TODO:
-	// 		fix the crash here!!
-	#if 0
 	result = ttsEngine->shutdown();
-	#endif
 
 	if (result != TTS_SUCCESS)
 	{

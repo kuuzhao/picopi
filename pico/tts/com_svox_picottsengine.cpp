@@ -37,15 +37,17 @@
 
 #define LOG_TAG "SVOX Pico Engine"
 
-#include "jstring.h"
 #include <string.h>
-
 // #include <utils/String16.h>                     /* for strlen16 */
 // #include <android_runtime/AndroidRuntime.h>
+#include <stdint.h>
 #include <TtsEngine.h>
+
+#include "jstring.h"
 // #include <cutils/jstring.h>
 #include <picoapi.h>
 #include <picodefs.h>
+
 #include "svox_ssml_parser.h"
 
 #define LOGI(...) fprintf(stderr, ##__VA_ARGS__)
@@ -1458,8 +1460,6 @@ tts_result TtsEngine::synthesizeText( const char * text, int8_t * buffer, size_t
     pico_Int16  bytes_sent, bytes_recv, text_remaining, out_data_type;
     pico_Status ret;
     SvoxSsmlParser * parser = NULL;
-
-    LOGE("LZ: input is: %s", text);
 
     picoSynthAbort = 0;
     if (text == NULL) {
