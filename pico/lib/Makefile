@@ -1,6 +1,7 @@
 CC = gcc # C compiler
 CFLAGS = -fPIC -Wall -Wextra -g # C flags
-#CFLAGS += -D_WIN32
+# LZ: for debug
+#CFLAGS += -DPICO_DEBUG
 LDFLAGS = -shared  # linking flags
 RM = rm -f  # rm command
 TARGET_LIB = libsvoxpico.so # target lib
